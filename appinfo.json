@@ -1,0 +1,25 @@
+{
+    "versionLabel": "1.0",
+    "uuid": "52b5162c-a9fd-4596-9a35-816b9115f584",
+    "appKeys": {},
+    "longName": "Veliby",
+    "versionCode": 1,
+    "capabilities": [
+        "configurable"
+    ],
+    "shortName": "Veliby",
+    "companyName": "Licryle",
+    "watchapp": {
+        "watchface": false
+    },
+    "resources": {
+        "media": [
+            {
+                "menuIcon": true,
+                "type": "png",
+                "name": "IMAGE_NO_LITTER",
+                "file": "images/no_litter_crop.png"
+            }
+        ]
+    }
+}
