@@ -1,18 +1,25 @@
 #include "pebble.h"
+#include "utils.h"
 #include "favorites.h"
+#include "map.h"
 
 static void init();
 static void deinit();
-static void faces_loop();
+static void face_next();
+static void face_destroy();
 static void window_load();
 static void window_unload();
 
+static void click_config_provider(void *context);
+
 static Window *window;
+static FaceDeInit face_deinit = 0;
 
 int main(void)
 {
   init();
-  faces_loop();
+  face_next();
+  app_event_loop();
   deinit();
 }
 
@@ -27,12 +34,19 @@ static void init()
   });
 
   window_stack_push(window, true /* Animated */);
+
+  window_set_click_config_provider(window, click_config_provider);
+
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Main.init(): Exit");
 }
  
 static void deinit()
 {
   //De-initialize elements here to save memory
+  face_destroy();
+
   window_destroy(window);
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Main.deinit(): Exit");
 }
 
 static void window_load(Window *window)
@@ -45,14 +59,26 @@ static void window_unload(Window *window)
   //We will safely destroy the Window's elements here!
 }
 
-void faces_loop() {
-  int _currentFace = 0;
+void face_destroy() {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Main.face_destro(): Enter");
+  if (face_deinit != 0) face_deinit();
+}
 
-  while (true) {
-    switch (_currentFace) {
-      case 0: face_favorites(window); break;
-    }
+void face_next() {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Main.faces_loop(): Enter");
+  static int _currentFace = 0;
 
-    _currentFace = _currentFace++ % 1;
+  face_destroy();
+
+  switch (_currentFace) {
+    case 0: face_deinit = face_favorites(window); break;
+    case 1: face_deinit = face_map(window); break;
   }
+
+  _currentFace = (_currentFace + 1) % 2;
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Main.faces_loop(): Next Face");
+}
+
+static void click_config_provider(void *context) {
+  window_single_click_subscribe(BUTTON_ID_SELECT, face_next);
 }

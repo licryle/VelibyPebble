@@ -1,3 +1,4 @@
 #include "pebble.h"
+#include "utils.h"
 
-void face_favorites(Window *_window);
+FaceDeInit face_favorites(Window *_window);
